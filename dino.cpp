@@ -1,74 +1,146 @@
 ﻿#include <stdio.h>
 #include <Windows.h>
 #include <time.h>
+#include <process.h>
+#include <conio.h>
 
 
-void legs(void);
+void legs(bool run, int currentY);
 void gotoxy(int x, int y);
-void character(void);
+void character(int currentY);
 void CursorView();
 void console(void);
 void DrawMap(void);
-void DrawTree();
+void DrawTree(int locationX);
+void EraseTree(int locationX);
+void eraseCharacter(int currentY);
+void eraseLegs(int currentY);
+
 
 #define characterX 10
 #define characterY 12
+#define treeX	   86
+#define treeY	   17
+
 
 int main(void)
 {
+	CursorView();
 	console();
 	DrawMap();
-	character();
-	
-	return 0;
-}
-
-void character(void)
-{	
-	gotoxy(characterX, characterY); 		printf("    ^ㅡㅡㅡ^\n");
-	gotoxy(characterX, characterY+1);		printf("   /  -  - |");
-	gotoxy(characterX, characterY+2);		printf("   |    ^  /");
-	gotoxy(characterX, characterY+3);		printf("   /       ＼");
-	gotoxy(characterX, characterY+4);		printf("  / /     ＼＼");
-	gotoxy(characterX, characterY+5);		printf("  ㅡ|     | ㅡ");
-	gotoxy(characterX, characterY+6);		printf("    |     |");
-
-	legs();
-
-}
-
-void legs(void)
-{
-
+	int currentCharacterY = characterY;
+	int currentTreeX=treeX;
 	bool run = true;
 	while (1)
 	{
-		CursorView();
+		eraseCharacter(currentCharacterY);
+		character(currentCharacterY);
+		DrawTree(currentTreeX);
+		legs(run, currentCharacterY);
 		if (run == true)
 		{
-			gotoxy(characterX, characterY + 7);		printf("    | |-| |");
-			gotoxy(characterX, characterY + 8);		printf("        |_|");
-			Sleep(130);
 			run = false;
 		}
 		else
 		{
-			gotoxy(characterX, characterY + 7); printf("    | |-| |");
-			gotoxy(characterX, characterY + 8);	printf("    |_|    ");
-			Sleep(130);
 			run = true;
 		}
+		currentTreeX -= 2;
+		EraseTree(currentTreeX);
+		if (currentTreeX == 0)
+		{
+			EraseTree(currentTreeX+2);
+			currentTreeX = treeX;
+		}
+
+    	if (_kbhit())
+		{
+			char jump;
+			jump = _getch();
+			if (jump == ' ')
+			{
+		
+				while (currentCharacterY > characterY - 4)
+				{
+					eraseCharacter(currentCharacterY);
+					character(currentCharacterY);
+					legs(run,currentCharacterY);
+					currentCharacterY--;
+					
+				}
+
+				while (currentCharacterY < characterY)
+				{
+					eraseCharacter(currentCharacterY);
+					character(currentCharacterY);
+					legs(run, currentCharacterY);
+					currentCharacterY++;
+
+				}
+				
+			}
+
+		}
+		
+	
+	}
 
 
+
+	
+	return 0;
+}
+
+
+void character(int currentY)
+{	
+
+	gotoxy(characterX, currentY); 			printf("    ^ㅡㅡㅡ^\n");
+	gotoxy(characterX, currentY +1);		printf("   /  -  - |\n");
+	gotoxy(characterX, currentY +2);		printf("   |    ^  /\n");
+	gotoxy(characterX, currentY +3);		printf("   /       ＼\n");
+	gotoxy(characterX, currentY +4);		printf("  / /     ＼＼\n");
+	gotoxy(characterX, currentY +5);		printf("  ㅡ|     | ㅡ\n");
+	gotoxy(characterX, currentY +6);		printf("    |     |\n");
+
+
+}
+
+void legs(bool run, int currentY)
+{
+
+	if (run == true)
+	{
+		gotoxy(characterX, currentY + 7);		printf("    | |-| |\n");
+		gotoxy(characterX, currentY + 8);		printf("        |_|\n");
+		Sleep(130);
+		
+	}
+	else
+	{
+		gotoxy(characterX, currentY + 7);	printf("    | |-| |\n");
+		gotoxy(characterX, currentY + 8);	printf("    |_|    \n");
+		Sleep(130);
+		run = true;
 	}
 
 
 }
 
-void eraseLegs(void)
+void eraseLegs(int currentY)
 {
-	gotoxy(characterX, characterY+7);		printf("        \n");
-	gotoxy(characterX, characterY + 8);		printf("        \n");
+	gotoxy(characterX, currentY +7);		printf("        \n");
+	gotoxy(characterX, currentY + 8);		printf("        \n");
+}
+
+void eraseCharacter(int currentY)
+{
+	int i = 0;
+	while (i < 21)
+	{
+		gotoxy(characterX, i);	printf("              \n");
+		i++;
+	}
 }
 
 void gotoxy(int x, int y) 
@@ -103,13 +175,25 @@ void console(void)
 void DrawMap()
 {
 	gotoxy(0, 21);		printf("==========================================================================================\n");
-	DrawTree();
+
 }
 
-void DrawTree()
+void DrawTree(int locationX)
 {
-	gotoxy(86, 17);		printf("***\n");
-	gotoxy(86, 18);		printf("*|* \n");
-	gotoxy(86, 19);		printf(" | \n");
-	gotoxy(86, 20);		printf(" | \n");
+	gotoxy(locationX, treeY);			printf("*** \n");
+	gotoxy(locationX, treeY+1);			printf("*|* \n");
+	gotoxy(locationX, treeY + 2);		printf(" |  \n");
+	gotoxy(locationX, treeY + 3);		printf(" |  \n");
+
 }
+
+void EraseTree(int locationX)
+{
+	gotoxy(locationX, treeY);			printf("       ");
+	gotoxy(locationX, treeY + 1);		printf("       ");
+	gotoxy(locationX, treeY + 2);		printf("       ");
+	gotoxy(locationX, treeY + 3);		printf("       ");
+}
+	
+
+
