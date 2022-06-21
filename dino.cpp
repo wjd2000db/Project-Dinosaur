@@ -6,21 +6,23 @@
 
 
 void legs(bool run, int currentY);
+void stopLegs(int currentY);
 void gotoxy(int x, int y);
-void character(int currentY);
+void character(int currentY, bool jump);
 void CursorView();
 void console(void);
 void DrawMap(void);
 void DrawTree(int locationX);
 void EraseTree(int locationX);
 void eraseCharacter(int currentY);
-void eraseLegs(int currentY);
+void eraseLegs(int currentY,bool jump);
 
 
 #define characterX 10
-#define characterY 12
+#define characterY 13
 #define treeX	   86
-#define treeY	   17
+#define treeY	   18
+
 
 
 int main(void)
@@ -31,20 +33,73 @@ int main(void)
 	int currentCharacterY = characterY;
 	int currentTreeX=treeX;
 	bool run = true;
+	bool jumping = false;
+	bool jumpMax = false;
 	while (1)
 	{
-		eraseCharacter(currentCharacterY);
-		character(currentCharacterY);
-		DrawTree(currentTreeX);
-		legs(run, currentCharacterY);
-		if (run == true)
+	
+
+		if (_kbhit())
 		{
-			run = false;
+			char jump;
+			jump = _getch();
+
+			if (jump == ' ')
+			{
+				jumping = true;
+			}
+		}
+
+		if (jumping)
+		{
+			
+ 			if (jumpMax)
+			{
+				currentCharacterY++;
+				
+			}
+			else
+			{
+				if (currentCharacterY > characterY - 6)
+				{
+					currentCharacterY--;
+				
+
+				}
+
+				if (currentCharacterY == characterY - 6)
+				{
+					jumpMax = true;
+					
+				}
+			}
+
+			if (currentCharacterY == characterY)
+			{
+				jumping = false;
+				jumpMax = false;
+			}
+			eraseLegs(currentCharacterY,jumping);
+			stopLegs(currentCharacterY);
 		}
 		else
 		{
-			run = true;
+			if (run == true)
+			{
+				run = false;
+			}
+			else
+			{
+				run = true;
+			}
+			legs(run, currentCharacterY);
 		}
+
+
+		character(currentCharacterY,jumping);
+		
+  		DrawTree(currentTreeX);
+		Sleep(120);
 		currentTreeX -= 2;
 		EraseTree(currentTreeX);
 		if (currentTreeX == 0)
@@ -52,35 +107,9 @@ int main(void)
 			EraseTree(currentTreeX+2);
 			currentTreeX = treeX;
 		}
+		eraseCharacter(currentCharacterY);
 
-    	if (_kbhit())
-		{
-			char jump;
-			jump = _getch();
-			if (jump == ' ')
-			{
 		
-				while (currentCharacterY > characterY - 4)
-				{
-					eraseCharacter(currentCharacterY);
-					character(currentCharacterY);
-					legs(run,currentCharacterY);
-					currentCharacterY--;
-					
-				}
-
-				while (currentCharacterY < characterY)
-				{
-					eraseCharacter(currentCharacterY);
-					character(currentCharacterY);
-					legs(run, currentCharacterY);
-					currentCharacterY++;
-
-				}
-				
-			}
-
-		}
 		
 	
 	}
@@ -92,16 +121,25 @@ int main(void)
 }
 
 
-void character(int currentY)
+void character(int currentY, bool jump)
 {	
 
-	gotoxy(characterX, currentY); 			printf("    ^ㅡㅡㅡ^\n");
-	gotoxy(characterX, currentY +1);		printf("   /  -  - |\n");
-	gotoxy(characterX, currentY +2);		printf("   |    ^  /\n");
-	gotoxy(characterX, currentY +3);		printf("   /       ＼\n");
-	gotoxy(characterX, currentY +4);		printf("  / /     ＼＼\n");
-	gotoxy(characterX, currentY +5);		printf("  ㅡ|     | ㅡ\n");
-	gotoxy(characterX, currentY +6);		printf("    |     |\n");
+	gotoxy(characterX, currentY); 			printf("    ^-----^\n");
+	gotoxy(characterX, currentY +3);		printf("   /       \\ \n");
+	gotoxy(characterX, currentY +4);		printf("  /_/     \\_\\\n");
+
+	if (jump == false)
+	{
+
+		gotoxy(characterX, currentY + 1);		printf("   /  -  - |\n");
+		gotoxy(characterX, currentY + 2);		printf("   |    ^  /\n");
+		gotoxy(characterX, currentY + 5);		printf("    |     |   \n");
+	}
+	if (jump)
+	{
+		gotoxy(characterX, currentY + 1);		printf("   /  o  o |\n");
+		gotoxy(characterX, currentY + 2);		printf("   |    -  /\n");
+	}
 
 
 }
@@ -111,26 +149,38 @@ void legs(bool run, int currentY)
 
 	if (run == true)
 	{
-		gotoxy(characterX, currentY + 7);		printf("    | |-| |\n");
-		gotoxy(characterX, currentY + 8);		printf("        |_|\n");
-		Sleep(130);
+		gotoxy(characterX, currentY + 6);		printf("    | |-| |\n");
+		gotoxy(characterX, currentY + 7);		printf("        |_|\n");
+		
 		
 	}
 	else
 	{
-		gotoxy(characterX, currentY + 7);	printf("    | |-| |\n");
-		gotoxy(characterX, currentY + 8);	printf("    |_|    \n");
-		Sleep(130);
+		gotoxy(characterX, currentY +6);	printf("    | |-| |\n");
+		gotoxy(characterX, currentY + 7);	printf("    |_|    \n");
 		run = true;
 	}
 
 
 }
 
-void eraseLegs(int currentY)
+void stopLegs(int currentY)
 {
-	gotoxy(characterX, currentY +7);		printf("        \n");
-	gotoxy(characterX, currentY + 8);		printf("        \n");
+
+	gotoxy(characterX, currentY + 5);		printf(" ┌---     ---┐ \n");
+	gotoxy(characterX, currentY + 6);		printf(" └-----------┘ \n");
+
+}
+
+
+void eraseLegs(int currentY,bool jump)
+{
+	if (jump)
+	{
+		gotoxy(characterX, currentY + 5);		printf("                \n");
+	}
+	gotoxy(characterX, currentY +6);		printf("                \n");
+	gotoxy(characterX, currentY + 7);		printf("                \n");
 }
 
 void eraseCharacter(int currentY)
@@ -138,7 +188,7 @@ void eraseCharacter(int currentY)
 	int i = 0;
 	while (i < 21)
 	{
-		gotoxy(characterX, i);	printf("              \n");
+		gotoxy(characterX, i);	printf("                  \n");
 		i++;
 	}
 }
@@ -183,16 +233,15 @@ void DrawTree(int locationX)
 	gotoxy(locationX, treeY);			printf("*** \n");
 	gotoxy(locationX, treeY+1);			printf("*|* \n");
 	gotoxy(locationX, treeY + 2);		printf(" |  \n");
-	gotoxy(locationX, treeY + 3);		printf(" |  \n");
 
 }
 
 void EraseTree(int locationX)
 {
-	gotoxy(locationX, treeY);			printf("       ");
-	gotoxy(locationX, treeY + 1);		printf("       ");
-	gotoxy(locationX, treeY + 2);		printf("       ");
-	gotoxy(locationX, treeY + 3);		printf("       ");
+	gotoxy(locationX+1, treeY);			printf("       ");
+	gotoxy(locationX+1, treeY + 1);		printf("       ");
+	gotoxy(locationX+1, treeY + 2);		printf("       ");
+
 }
 	
 
