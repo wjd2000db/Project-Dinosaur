@@ -16,6 +16,7 @@ void DrawTree(int locationX);
 void EraseTree(int locationX);
 void eraseCharacter(int currentY);
 void eraseLegs(int currentY,bool jump);
+void startPage(void);
 
 
 #define characterX 10
@@ -29,90 +30,102 @@ int main(void)
 {
 	CursorView();
 	console();
-	DrawMap();
-	int currentCharacterY = characterY;
-	int currentTreeX=treeX;
-	bool run = true;
-	bool jumping = false;
-	bool jumpMax = false;
-	while (1)
+	startPage();
+
+	char start;
+	start = _getch();
+
+	if (start == ' ')
 	{
+		system("cls");
+		DrawMap();
+		int currentCharacterY = characterY;
+		int currentTreeX=treeX;
+		bool run = true;
+		bool jumping = false;
+		bool jumpMax = false;
+		while (1)
+		{
 	
 
-		if (_kbhit())
-		{
-			char jump;
-			jump = _getch();
-
-			if (jump == ' ')
+			if (_kbhit())
 			{
-				jumping = true;
-			}
-		}
+				char jump;
+				jump = _getch();
 
-		if (jumping)
-		{
+				if (jump == ' ')
+				{
+					jumping = true;
+				}
+			}
+
+			if (jumping)
+			{
 			
- 			if (jumpMax)
-			{
-				currentCharacterY++;
-				
-			}
-			else
-			{
-				if (currentCharacterY > characterY - 6)
+ 				if (jumpMax)
 				{
-					currentCharacterY--;
+					currentCharacterY++;
 				
-
 				}
-
-				if (currentCharacterY == characterY - 6)
+				else
 				{
-					jumpMax = true;
+					if (currentCharacterY > characterY - 6)
+					{
+						currentCharacterY--;
+				
+
+					}
+
+					if (currentCharacterY == characterY - 6)
+					{
+						jumpMax = true;
 					
+					}
 				}
-			}
 
-			if (currentCharacterY == characterY)
-			{
-				jumping = false;
-				jumpMax = false;
-			}
-			eraseLegs(currentCharacterY,jumping);
-			stopLegs(currentCharacterY);
-		}
-		else
-		{
-			if (run == true)
-			{
-				run = false;
+				if (currentCharacterY == characterY)
+				{
+					jumping = false;
+					jumpMax = false;
+				}
+				eraseLegs(currentCharacterY,jumping);
+				stopLegs(currentCharacterY);
 			}
 			else
 			{
-				run = true;
+				if (run == true)
+				{
+					run = false;
+				}
+				else
+				{
+					run = true;
+				}
+				legs(run, currentCharacterY);
 			}
-			legs(run, currentCharacterY);
-		}
 
 
-		character(currentCharacterY,jumping);
+			character(currentCharacterY,jumping);
 		
-  		DrawTree(currentTreeX);
-		Sleep(120);
-		currentTreeX -= 2;
-		EraseTree(currentTreeX);
-		if (currentTreeX == 0)
-		{
-			EraseTree(currentTreeX+2);
-			currentTreeX = treeX;
-		}
-		eraseCharacter(currentCharacterY);
+  			DrawTree(currentTreeX);
+			Sleep(120);
+			
+			currentTreeX -= 2;
+			EraseTree(currentTreeX);
+			if (currentTreeX == 0)
+			{
+				EraseTree(currentTreeX+2);
+				currentTreeX = treeX;
+			}
+			eraseCharacter(currentCharacterY);
 
 		
 		
 	
+		}
+		
 	}
+	
 
 
 
@@ -245,4 +258,26 @@ void EraseTree(int locationX)
 }
 	
 
+void startPage(void)
+{
+	gotoxy(0, 3);  
+	printf("-----------------------------------------------------------------------------------------\n");
+	printf("|                                                                                       |\n");
+	printf("|                                                                                       |\n");
+	printf("|                                                                                       |\n");
+	printf("|             @ @    @   @  @    @          @ @    @   @  @    @     @                  |\n");
+	printf("|             @  @   @   @  @ @  @          @  @   @   @  @ @  @     @                  |\n");
+	printf("|             @ @    @   @  @  @ @          @ @    @   @  @  @ @     @                  |\n");
+	printf("|             @  @   @   @  @   @@          @  @   @   @  @   @@                        |\n");
+	printf("|             @   @   @ @   @    @          @   @   @ @   @    @     @                  |\n");
+	printf("|                                                                                       |\n");
+	printf("|                                                                                       |\n");
+	printf("|                                                                                       |\n");
+	printf("|                         Press 'Space Bar' to Start                                    |\n");
+	printf("|                                                                                       |\n");
+	printf("|                                                                                       |\n");
+	printf("|                                                                                       |\n");
+	printf("-----------------------------------------------------------------------------------------\n");
+
+}
 
