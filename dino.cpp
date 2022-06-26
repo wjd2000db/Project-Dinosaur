@@ -9,14 +9,15 @@ void legs(bool run, int currentY);
 void stopLegs(int currentY);
 void gotoxy(int x, int y);
 void character(int currentY, bool jump);
-void CursorView();
+void cursorView();
 void console(void);
-void DrawMap(void);
-void DrawTree(int locationX);
-void EraseTree(int locationX);
+void drawMap(void);
+void drawTree(int locationX);
+void eraseTree(int locationX);
 void eraseCharacter(int currentY);
 void eraseLegs(int currentY,bool jump);
 void startPage(void);
+int	crush(int currentY, int currentTreeX);
 
 
 #define characterX 10
@@ -28,7 +29,7 @@ void startPage(void);
 
 int main(void)
 {
-	CursorView();
+	cursorView();
 	console();
 	startPage();
 
@@ -38,7 +39,7 @@ int main(void)
 	if (start == ' ')
 	{
 		system("cls");
-		DrawMap();
+		drawMap();
 		int currentCharacterY = characterY;
 		int currentTreeX=treeX;
 		bool run = true;
@@ -61,7 +62,7 @@ int main(void)
 
 			if (jumping)
 			{
-			
+		
  				if (jumpMax)
 				{
 					currentCharacterY++;
@@ -106,21 +107,26 @@ int main(void)
 
 
 			character(currentCharacterY,jumping);
-		
-  			DrawTree(currentTreeX);
-			Sleep(120);
+	
+  			drawTree(currentTreeX);
+			Sleep(100);
 			
+			int checkCrush;
+   			checkCrush = crush(currentCharacterY+5, currentTreeX);
+			if (checkCrush == 1)
+			{
+				break;
+			}
 			currentTreeX -= 2;
-			EraseTree(currentTreeX);
+			eraseTree(currentTreeX);
 			if (currentTreeX == 0)
 			{
-				EraseTree(currentTreeX+2);
+				eraseTree(currentTreeX+2);
 				currentTreeX = treeX;
 			}
 			eraseCharacter(currentCharacterY);
 
-		
-		
+			
 	
 		}
 		
@@ -180,8 +186,8 @@ void legs(bool run, int currentY)
 void stopLegs(int currentY)
 {
 
-	gotoxy(characterX, currentY + 5);		printf(" ┌---     ---┐ \n");
-	gotoxy(characterX, currentY + 6);		printf(" └-----------┘ \n");
+	gotoxy(characterX, currentY + 5);		printf("  ┌--     --┐ \n");
+	gotoxy(characterX, currentY + 6);		printf("  └---------┘ \n");
 
 }
 
@@ -221,7 +227,7 @@ int time()
 	}
 }
 
-void CursorView(void)
+void cursorView(void)
 {
 	CONSOLE_CURSOR_INFO cursorInfo = { 0, };
 	cursorInfo.dwSize = 1;
@@ -235,13 +241,13 @@ void console(void)
 	SetConsoleTitle(TEXT("Run Run!"));
 }
 
-void DrawMap()
+void drawMap()
 {
 	gotoxy(0, 21);		printf("==========================================================================================\n");
 
 }
 
-void DrawTree(int locationX)
+void drawTree(int locationX)
 {
 	gotoxy(locationX, treeY);			printf("*** \n");
 	gotoxy(locationX, treeY+1);			printf("*|* \n");
@@ -249,11 +255,11 @@ void DrawTree(int locationX)
 
 }
 
-void EraseTree(int locationX)
+void eraseTree(int locationX)
 {
-	gotoxy(locationX+1, treeY);			printf("       ");
-	gotoxy(locationX+1, treeY + 1);		printf("       ");
-	gotoxy(locationX+1, treeY + 2);		printf("       ");
+	gotoxy(locationX+1, treeY);			printf("     ");
+	gotoxy(locationX+1, treeY + 1);		printf("     ");
+	gotoxy(locationX+1, treeY + 2);		printf("     ");
 
 }
 	
@@ -280,4 +286,34 @@ void startPage(void)
 	printf("-----------------------------------------------------------------------------------------\n");
 
 }
+
+int	crush(int currentY, int currentTreeX)
+{
+	int X = characterX;
+	while (1)
+	{
+
+		if (X == characterX + 13)
+		{
+			break;
+		}
+		if (X == currentTreeX)
+		{
+			if (currentY == treeY)
+			{
+				return 1;
+			}
+			else if (currentY + 1 == treeY)
+			{
+				return 1;
+			}
+		}
+		X++;
+	}
+
+		
+	return 2;
+}
+
+//int score()
 
