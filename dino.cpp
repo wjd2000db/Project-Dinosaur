@@ -11,14 +11,15 @@ void gotoxy(int x, int y);
 void character(int currentY, bool jump);
 void cursorView();
 void console(void);
-void drawMap(void);
+void drawMap(int score);
 void drawTree(int locationX);
 void eraseTree(int locationX);
 void eraseCharacter(int currentY);
 void eraseLegs(int currentY,bool jump);
 void startPage(void);
 int	crush(int currentY, int currentTreeX);
-
+void gameOver(int score);
+int time();
 
 #define characterX 10
 #define characterY 13
@@ -38,17 +39,19 @@ int main(void)
 
 	if (start == ' ')
 	{
-		system("cls");
-		drawMap();
 		int currentCharacterY = characterY;
-		int currentTreeX=treeX;
+		int currentTreeX = treeX;
 		bool run = true;
 		bool jumping = false;
 		bool jumpMax = false;
+		int score = 0;
+		system("cls");
+		
+		
 		while (1)
 		{
 	
-
+			drawMap(score);
 			if (_kbhit())
 			{
 				char jump;
@@ -125,13 +128,15 @@ int main(void)
 				currentTreeX = treeX;
 			}
 			eraseCharacter(currentCharacterY);
-
+			
+			score += 20;
 			
 	
 		}
-		
+		system("cls");
+		gameOver(score);
+
 	}
-	
 
 
 
@@ -224,6 +229,10 @@ int time()
 	{
 		clock_t time = clock();
 		double timeSecond = (double)(time / CLOCKS_PER_SEC);
+		if (timeSecond > 10000)
+		{
+			return 1;
+		}
 	}
 }
 
@@ -241,8 +250,9 @@ void console(void)
 	SetConsoleTitle(TEXT("Run Run!"));
 }
 
-void drawMap()
+void drawMap(int score)
 {
+	gotoxy(70, 3);		printf("%d", score);
 	gotoxy(0, 21);		printf("==========================================================================================\n");
 
 }
@@ -303,6 +313,7 @@ int	crush(int currentY, int currentTreeX)
 			{
 				return 1;
 			}
+
 			else if (currentY + 1 == treeY)
 			{
 				return 1;
@@ -316,4 +327,23 @@ int	crush(int currentY, int currentTreeX)
 }
 
 //int score()
+void gameOver(int score)
+{
+	gotoxy(0, 3);
+	printf("-----------------------------------------------------------------------------------------\n");
+	printf("|                                                                                       |\n");
+	printf("|              @ @      @     @     @  @ @ @       @ @   @     @  @ @ @  @ @ @          |\n");
+	printf("|             @        @ @    @ @ @ @  @          @   @  @     @  @      @   @          |\n");
+	printf("|            @   @@   @ @ @   @  @  @  @ @ @      @   @   @   @   @ @ @  @ @            |\n");
+	printf("|             @   @  @     @  @     @  @          @   @    @ @    @      @  @           |\n");
+	printf("|              @ @   @     @  @     @  @ @ @       @ @      @     @ @ @  @   @          |\n");
+	printf("|                                                                                       |\n");
+	printf("|                                                                                       |\n");
+	printf("|                                    Score : %d                                         |\n",score);
+	printf("|                                                                                       |\n");
+	printf("|                                                                                       |\n");
+	printf("|                                                                                       |\n");
+	printf("-----------------------------------------------------------------------------------------\n");
+
+}
 
